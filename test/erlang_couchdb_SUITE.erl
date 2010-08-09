@@ -1,7 +1,7 @@
 -module(erlang_couchdb_SUITE).
 -compile(export_all).
 
--include_lib("ct.hrl").
+-include_lib("common_test/include/ct.hrl").
 
 -define(CONNECTION, {"localhost", 5984}).
 -define(DBNAME, "t_erlang_couchdb_test").
