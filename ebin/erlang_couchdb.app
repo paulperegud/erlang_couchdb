@@ -1,6 +1,6 @@
 {application,erlang_couchdb,
              [{description,"erlang-couchdb"},
-              {vsn,"0.1"},
+              {vsn,"0.2.4"},
               {modules,[erlang_couchdb,mochijson2]},
               {registered,[]},
               {applications,[]},
