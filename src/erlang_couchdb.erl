@@ -65,7 +65,7 @@
 
 -export([server_info/1]).
 -export([create_database/2, database_info/2, retrieve_all_dbs/1, delete_database/2]).
--export([create_document/3, create_document/4, create_documents/3, create_attachment/5]).
+-export([create_document/3, create_document/4, create_documents/3, create_attachment/6]).
 -export([retrieve_document/3, retrieve_document/4, document_revision/3]).
 -export([update_document/4, delete_document/4, delete_documents/3]).
 -export([create_view/5, create_view/6, invoke_view/5, invoke_multikey_view/6, load_view/4]).
@@ -236,14 +236,14 @@ retrieve_all_dbs({Server, ServerPort}) when is_list(Server), is_integer(ServerPo
         Other -> {error, Other}
     end.
 
-%% @spec create_attachment(DBServer::server_address(), Database::string(), DocumentID::string(), File::string() | Body::binary(), ContentType::string()) -> {"ok": true, "id": "document", "rev": Rev::string()}
+%% @spec create_attachment(DBServer::server_address(), Database::string(), DocumentID::string(), Revision:string(), File::string() | Body::binary(), ContentType::string()) -> {"ok": true, "id": "document", "rev": Rev::string()}
 %%
 %% @doc Create a new attachment document.
-create_attachment({Server, ServerPort}, Database, DocumentID, File, ContentType) when is_list(File) ->
+create_attachment({Server, ServerPort}, Database, DocumentID, Revision, File, ContentType) when is_list(File) ->
     {ok, Body} = file:read_file(File),
-    create_attachment({Server, ServerPort}, Database, DocumentID, Body, ContentType);
-create_attachment({Server, ServerPort}, Database, DocumentID, Body, ContentType) when is_binary(Body) ->
-    Url = build_uri(Database, DocumentID ++ "/attachment"),
+    create_attachment({Server, ServerPort}, Database, DocumentID, Revision, Body, ContentType);
+create_attachment({Server, ServerPort}, Database, DocumentID, Revision, Body, ContentType) when is_binary(Body) ->
+    Url = build_uri(Database, DocumentID ++ "/attachment?rev=" ++ Revision),
     erlang_couchdb:raw_request("PUT", Server, ServerPort, Url, ContentType, Body).
 
 
