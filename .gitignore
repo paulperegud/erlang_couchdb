@@ -1,3 +1,5 @@
 logs/
 ebin/*.beam
 test/*.beam
+.eunit/
+*~
