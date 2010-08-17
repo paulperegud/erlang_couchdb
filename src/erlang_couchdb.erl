@@ -394,7 +394,7 @@ parse_view({json, Structure}) ->
     Docs = [begin
                 {struct, Bits} = Rec,
                 Id = proplists:get_value(<<"id">>, Bits),
-                Key = proplists:get_value(<<"id">>, Bits),
+                Key = proplists:get_value(<<"key">>, Bits),
                 
                 case proplists:get_value(<<"value">>, Bits, []) of
                     [] -> {Id, Key};
