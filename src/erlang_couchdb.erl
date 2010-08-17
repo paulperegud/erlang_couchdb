@@ -391,16 +391,18 @@ parse_view({json, Structure}) ->
     TotalRows = proplists:get_value(<<"total_rows">>, Properties, 0),
     Offset = proplists:get_value(<<"offset">>, Properties, 0),
     Data = proplists:get_value(<<"rows">>, Properties, []),
-    Ids = [begin
-        {struct, Bits} = Rec,
-        Id = proplists:get_value(<<"id">>, Bits),
-        case proplists:get_value(<<"value">>, Bits, []) of
-            [] -> Id;
-            {struct, RowValues} -> {Id, RowValues};
-            _ -> Id
-        end
-    end || Rec <- Data],
-    {TotalRows, Offset, Ids};
+    Docs = [begin
+                {struct, Bits} = Rec,
+                Id = proplists:get_value(<<"id">>, Bits),
+                Key = proplists:get_value(<<"id">>, Bits),
+                
+                case proplists:get_value(<<"value">>, Bits, []) of
+                    [] -> {Id, Key};
+                    {struct, RowValues} -> {Id, Key, RowValues};
+                    _ -> {Id, Key}
+                end
+            end || Rec <- Data],
+    {TotalRows, Offset, Docs};
 parse_view(_Other) -> {0, 0, []}.
 
 %% @doc Fetch a number of UUIDs from a CouchDB server.
