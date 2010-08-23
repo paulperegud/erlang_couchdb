@@ -256,7 +256,7 @@ create_document({Server, ServerPort}, Database, Attributes) when is_list(Server)
     create_document({Server, ServerPort}, Database, {struct, Attributes});
 create_document({Server, ServerPort}, Database, {struct, _} = Obj) when is_list(Server), is_integer(ServerPort) ->
     Url = build_uri(Database),
-    JSON = list_to_binary(mochijson2:encode(Obj)),
+    JSON = mochijson2:encode(Obj),
     raw_request("POST", Server, ServerPort, Url, JSON).
 
 %% @spec create_document(DBServer::server_address(), Database::string(), DocumentID::string(), Attributes::any()) ->  {json, Response::any()} | {raw, Other::any()}
@@ -277,7 +277,7 @@ create_documents({Server, ServerPort}, Database, Documents) when is_list(Server)
             {struct, Doc} || Doc <- Documents
         ]}
     ]},
-    JSON = list_to_binary(mochijson2:encode(BulkCreate)),
+    JSON = mochijson2:encode(BulkCreate),
     raw_request("POST", Server, ServerPort, Url, JSON).
 
 %% @doc Return a tuple containing a document id and the document's latest
