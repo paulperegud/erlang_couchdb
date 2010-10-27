@@ -313,11 +313,11 @@ retrieve_document({Server, ServerPort}, Database, DocID, Attributes) when is_lis
 %% @todo Create a spec for this.
 update_document({Server, ServerPort}, Database, DocID, {struct,_} = Obj) when is_list(Server), is_integer(ServerPort) ->
     Url = build_uri(Database, DocID),
-    JSON = list_to_binary(mochijson2:encode(Obj)),
+    JSON = iolist_to_binary(mochijson2:encode(Obj)),
     raw_request("PUT", Server, ServerPort, Url, JSON);
 update_document({Server, ServerPort}, Database, DocID, Attributes) when is_list(Server), is_integer(ServerPort) ->
     Url = build_uri(Database, DocID),
-    JSON = list_to_binary(mochijson2:encode({struct, Attributes})),
+    JSON = iolist_to_binary(mochijson2:encode({struct, Attributes})),
     raw_request("PUT", Server, ServerPort, Url, JSON).
 
 %% @doc Deletes a given document by id and revision.
@@ -334,7 +334,7 @@ delete_documents({Server, ServerPort}, Database, Documents) when is_list(Server)
             {struct, [{<<"_id">>, Id}, {<<"_rev">>, Rev}, {<<"_deleted">>, true}]} || {Id, Rev} <- Documents
         ]}
     ]},
-    JSON = list_to_binary(mochijson2:encode(BulkDelete)),
+    JSON = iolist_to_binary(mochijson2:encode(BulkDelete)),
     raw_request("POST", Server, ServerPort, Url, JSON).
 
 %% @doc Creates a design document. See create_view/6 for more.
@@ -365,7 +365,7 @@ create_view({Server, ServerPort}, Database, ViewClass, Language, Views, Attribut
             end || View <- Views
         ]}}
     | Attributes],
-    JSON = list_to_binary(mochijson2:encode({struct, Design})),
+    JSON = iolist_to_binary(mochijson2:encode({struct, Design})),
     Url = build_uri(Database, "_design/" ++ ViewClass),
     raw_request("PUT", Server, ServerPort, Url, JSON).
 
@@ -379,7 +379,7 @@ invoke_view({Server, ServerPort}, Database, ViewClass, ViewId, Attributes) when 
 %% @todo Create a spec for this.
 invoke_multikey_view({Server, ServerPort}, Database, ViewClass, ViewId, Keys, Attributes) when is_list(Server), is_integer(ServerPort) ->
     Url = view_uri(Database, ViewClass, ViewId, Attributes),
-    JSON = list_to_binary(mochijson2:encode({struct, [{keys, Keys}]})),
+    JSON = iolist_to_binary(mochijson2:encode({struct, [{keys, Keys}]})),
     raw_request("POST", Server, ServerPort, Url, JSON).
 
 %% @doc Return a list of document ids for a given view.
