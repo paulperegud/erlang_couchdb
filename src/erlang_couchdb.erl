@@ -1,5 +1,5 @@
 %% Copyright (c) 2008 Nick Gerakines <nick@gerakines.net>
-%% 
+%%
 %% Permission is hereby granted, free of charge, to any person
 %% obtaining a copy of this software and associated documentation
 %% files (the "Software"), to deal in the Software without
@@ -8,10 +8,10 @@
 %% copies of the Software, and to permit persons to whom the
 %% Software is furnished to do so, subject to the following
 %% conditions:
-%% 
+%%
 %% The above copyright notice and this permission notice shall be
 %% included in all copies or substantial portions of the Software.
-%% 
+%%
 %% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 %% EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
 %% OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -20,7 +20,7 @@
 %% WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 %% FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 %% OTHER DEALINGS IN THE SOFTWARE.
-%% 
+%%
 %% Change Log:
 %% * v2009-01-23 ngerakines
 %%   - Importing functionality from etnt_. GitHub merge didn't work.
@@ -42,21 +42,21 @@
 %%   - Moved away from urlencode dependancies from yaws to mochiweb.
 %%   - Overall the module 'does less'.
 %%   - Moved away from the gen_server model.
-%% 
+%%
 %% @author Nick Gerakines <nick@gerakines.net>
 %% @copyright 2008 Nick Gerakines
 %% @version 0.2.1
 %% @doc A simple CouchDB client.
-%% 
+%%
 %% This module was created for the purpose of creating a very small and light
 %% CouchDB interface. It supports a limited number of API methods and features.
-%% 
+%%
 %% This module was built for use in the I Play WoW Facebook Application and
 %% website. Support is limited and features will be added as needed by the
 %% developer/website.
-%% 
+%%
 %% This code is available as Open Source Software under the MIT license.
-%% 
+%%
 %% Updates at http://github.com/ngerakines/erlang_couchdb/
 -module(erlang_couchdb).
 
@@ -174,7 +174,7 @@ build_querystring(PropList) ->
     lists:concat(["?", mochiweb_util:urlencode(PropList)]).
 
 %% @private
-%% Attempt to decode a JSON body into Erlang structures. If parsing fails 
+%% Attempt to decode a JSON body into Erlang structures. If parsing fails
 %% then simply return the raw data and let the user deal with it. This is
 %% the only place where a try/catch block is used to minimize this module's
 %% interaction with the user's environment.
@@ -262,7 +262,7 @@ create_document({Server, ServerPort}, Database, {struct, _} = Obj) when is_list(
 %% @spec create_document(DBServer::server_address(), Database::string(), DocumentID::string(), Attributes::any()) ->  {json, Response::any()} | {raw, Other::any()}
 %%
 %% @doc Create a new document with a specific document ID. This is just an
-%% accessor function to update_document/4 when the intent is to create a 
+%% accessor function to update_document/4 when the intent is to create a
 %% new document.
 create_document({Server, ServerPort}, Database, DocumentID, Attributes) when is_list(Server), is_integer(ServerPort) ->
     update_document({Server, ServerPort}, Database, DocumentID, Attributes).
@@ -348,7 +348,7 @@ create_view({Server, ServerPort}, Database, ViewClass, Language, Views) ->
 %% parameter.
 %% @todo Create a spec for this.
 create_view({Server, ServerPort}, Database, ViewClass, Language, Views, Attributes)  when is_list(Server), is_integer(ServerPort), is_list(Language) ->
-	create_view({Server, ServerPort}, Database, ViewClass, list_to_binary(Language), Views, Attributes) 
+	create_view({Server, ServerPort}, Database, ViewClass, list_to_binary(Language), Views, Attributes)
 	;
 create_view({Server, ServerPort}, Database, ViewClass, Language, Views, Attributes)  when is_list(Server), is_integer(ServerPort) ->
     Design = [
@@ -357,7 +357,7 @@ create_view({Server, ServerPort}, Database, ViewClass, Language, Views, Attribut
         {<<"views">>, {struct, [
             begin
                 case View of
-                    {Name, Map} -> 
+                    {Name, Map} ->
                         {Name, {struct, [{<<"map">>, list_to_binary(Map)}]}};
                     {Name, Map, Reduce} ->
                         {Name, {struct, [{<<"map">>, list_to_binary(Map)}, {<<"reduce">>, list_to_binary(Reduce)}]}}
@@ -395,7 +395,7 @@ parse_view({json, Structure}) ->
                 {struct, Bits} = Rec,
                 Id = proplists:get_value(<<"id">>, Bits),
                 Key = proplists:get_value(<<"key">>, Bits),
-                
+
                 case proplists:get_value(<<"value">>, Bits, []) of
                     [] -> {Id, Key};
                     {struct, RowValues} -> {Id, Key, RowValues};
@@ -460,8 +460,10 @@ set_value(Key, Value) when is_binary(Key) ->
     fun(Struct) -> set_value(Key, vals(Value), Struct) end.
 
 %% @private
+vals([H | _T] = L) when is_tuple(H) -> L;
 vals(B) when is_binary(B) -> B;
 vals(I) when is_integer(I) -> I;
+vals(F) when is_float(F) -> F;
 vals(L) when is_list(L) -> list_to_binary(L);
 vals(A) when is_atom(A) -> vals(atom_to_list(A)).
 
