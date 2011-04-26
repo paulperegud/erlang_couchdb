@@ -8,8 +8,7 @@
              erlang_couchdb
             ]},
   {registered, []},
-  {applications, [
-                 ]},
+  {applications, [kernel, stdlib]},
   {mod, { erlang_couchdb_app, []}},
   {env, []}
  ]}.

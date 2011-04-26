@@ -5,7 +5,7 @@
 %%      with binaries as strings, arrays as lists (without an {array, _})
 %%      wrapper and it only knows how to decode UTF-8 (and ASCII).
 
--module(mochijson2).
+-module(mjson2).
 -author('bob@mochimedia.com').
 -export([encoder/1, encode/1]).
 -export([decoder/1, decode/1]).
@@ -403,7 +403,7 @@ is_obj({struct, Props}) ->
                 true;
             (_) ->
                 false
-        end,    
+        end,
     lists:all(F, Props).
 
 obj_from_list(Props) ->
@@ -488,21 +488,21 @@ e2j_test_vec(utf8) ->
      {[], "[]"},
      {[[]], "[[]]"},
      {[1, <<"foo">>], "[1,\"foo\"]"},
-     
+
      %% json array in a json object
      {obj_from_list([{<<"foo">>, [123]}]),
       "{\"foo\":[123]}"},
-     
+
      %% json object in a json object
      {obj_from_list([{<<"foo">>, obj_from_list([{<<"bar">>, true}])}]),
       "{\"foo\":{\"bar\":true}}"},
-     
+
      %% fold evaluation order
      {obj_from_list([{<<"foo">>, []},
                      {<<"bar">>, obj_from_list([{<<"baz">>, true}])},
                      {<<"alice">>, <<"bob">>}]),
       "{\"foo\":[],\"bar\":{\"baz\":true},\"alice\":\"bob\"}"},
-     
+
      %% json object in a json array
      {[-123, <<"foo">>, obj_from_list([{<<"bar">>, []}]), null],
       "[-123,\"foo\",{\"bar\":[]},null]"}
